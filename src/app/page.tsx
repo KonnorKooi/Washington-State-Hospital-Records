@@ -23,7 +23,7 @@ const HomePage: React.FC = () => {
   const [filteredHospitals, setFilteredHospitals] = useState<Hospital[]>([]);
   const [expandedHospital, setExpandedHospital] = useState<Hospital | null>(
     null
-  ); // Added state for expanded hospital
+  );
   const hospitalRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [checkboxFilters, setCheckboxFilters] = useState({
     "Medication abortion": false,
@@ -93,8 +93,6 @@ const HomePage: React.FC = () => {
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const term = event.target.value.toLowerCase();
     setSearchTerm(term);
-    // console.log("apikey:", process.env.NEXT_PUBLIC_GOOGLE_API_KEY);
-    // console.log("apikey:", process.env.NEXT_PUBLIC_MAP_ID);
   };
 
   useEffect(() => {
@@ -123,28 +121,8 @@ const HomePage: React.FC = () => {
   return (
     <div className="flex flex-col h-screen">
       <Navbar />
-      <div className="flex flex-1 w-full h-full">
-        <div className="flex flex-col w-1/4 p-5 border-r border-gray-200">
-          <ScrollArea className="p-5 border border-gray-200 rounded-md overflow-y-auto flex-1">
-            {filteredHospitals.map((hospital, index) => (
-              <div
-                key={index}
-                ref={(el) => {
-                  if (el) {
-                    hospitalRefs.current[index] = el;
-                  }
-                }}>
-                <HospitalBlock
-                  key={hospital.id}
-                  hospital={hospital}
-                  expanded={expandedHospital === hospital}
-                  setExpandedHospital={setExpandedHospital}
-                />
-              </div>
-            ))}
-          </ScrollArea>
-        </div>
-        <div className="flex flex-col flex-1 p-5">
+      <div className="flex flex-1 w-full h-full flex-col lg:flex-row">
+        <div className="flex flex-col w-full lg:w-3/4 p-5">
           <div className="p-5 border border-gray-200 rounded-md mb-5">
             <h2 className="text-2xl font-bold mb-3">Hospital Search</h2>
             <input
@@ -169,6 +147,26 @@ const HomePage: React.FC = () => {
               handleCheckboxChange={handleCheckboxChange}
             />
           </div>
+        </div>
+        <div className="flex flex-col w-full lg:w-1/4 p-5 border-t border-gray-200 lg:border-t-0 lg:border-l">
+          <ScrollArea className="p-5 border border-gray-200 rounded-md overflow-y-auto flex-1">
+            {filteredHospitals.map((hospital, index) => (
+              <div
+                key={index}
+                ref={(el) => {
+                  if (el) {
+                    hospitalRefs.current[index] = el;
+                  }
+                }}>
+                <HospitalBlock
+                  key={hospital.id}
+                  hospital={hospital}
+                  expanded={expandedHospital === hospital}
+                  setExpandedHospital={setExpandedHospital}
+                />
+              </div>
+            ))}
+          </ScrollArea>
         </div>
       </div>
     </div>
