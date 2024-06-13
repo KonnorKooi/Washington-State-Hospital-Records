@@ -9,7 +9,17 @@ import {
 } from "@vis.gl/react-google-maps";
 import "./MapComponent.css"; // Import the CSS file for styling
 
-const MapComponent = ({ apiKey, mapId, hospitals, onMarkerClick }) => {
+const MapComponent = ({
+  apiKey,
+  mapId,
+  hospitals,
+  onMarkerClick,
+}: {
+  apiKey: string;
+  mapId: string;
+  hospitals: any[];
+  onMarkerClick: (hospital: any) => void;
+}) => {
   const [infowindowOpen, setInfowindowOpen] = useState(false);
   const [marker] = useAdvancedMarkerRef();
   const [mapCenter, setMapCenter] = useState({
@@ -18,7 +28,7 @@ const MapComponent = ({ apiKey, mapId, hospitals, onMarkerClick }) => {
   });
   const [mapZoom, setMapZoom] = useState(7);
 
-  const handleCameraChange = (ev) => {
+  const handleCameraChange = (ev: { detail: { center: any; zoom: any } }) => {
     const { center, zoom } = ev.detail;
     setMapCenter(center);
     setMapZoom(zoom);
@@ -46,8 +56,7 @@ const MapComponent = ({ apiKey, mapId, hospitals, onMarkerClick }) => {
           zoom={mapZoom}
           center={mapCenter}
           mapId={mapId}
-          onCameraChanged={handleCameraChange}
-          options={{ zoomControl: true, styles: null }}>
+          onCameraChanged={handleCameraChange}>
           {filteredHospitals.map((hospital, index) => {
             const { lat, long } = hospital;
             return (
@@ -64,7 +73,6 @@ const MapComponent = ({ apiKey, mapId, hospitals, onMarkerClick }) => {
           })}
           {infowindowOpen && (
             <InfoWindow
-              anchor={marker}
               maxWidth={200}
               onCloseClick={() => setInfowindowOpen(false)}>
               This is an example for the{" "}

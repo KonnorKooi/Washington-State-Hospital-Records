@@ -125,7 +125,13 @@ const HomePage: React.FC = () => {
         <div className="flex flex-col w-1/4 p-5 border-r border-gray-200">
           <ScrollArea className="p-5 border border-gray-200 rounded-md overflow-y-auto flex-1">
             {filteredHospitals.map((hospital, index) => (
-              <div ref={(el) => (hospitalRefs.current[index] = el)} key={index}>
+              <div
+                key={index}
+                ref={(el) => {
+                  if (el) {
+                    hospitalRefs.current[index] = el;
+                  }
+                }}>
                 <HospitalBlock
                   key={hospital.id}
                   hospital={hospital}
@@ -149,8 +155,8 @@ const HomePage: React.FC = () => {
           </div>
           <div className="flex-1">
             <MapComponent
-              apiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY}
-              mapId={process.env.NEXT_PUBLIC_MAP_ID}
+              apiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY ?? ""}
+              mapId={process.env.NEXT_PUBLIC_MAP_ID ?? ""}
               hospitals={filteredHospitals}
               onMarkerClick={handleMarkerClick}
             />

@@ -1,11 +1,32 @@
 import React, { useEffect, useRef, useState } from "react";
+interface Hospital {
+  id: string;
+  Hospital: string;
+  City?: string;
+  State?: string;
+  Lat: string;
+  Long: string;
+  [key: string]: any; // For dynamic properties
+}
 
-const HospitalBlock = ({ hospital, expanded, setExpandedHospital }) => {
-  const blockRef = useRef(null);
+type HospitalBlockProps = {
+  hospital: Hospital;
+  expanded: boolean;
+  setExpandedHospital: React.Dispatch<React.SetStateAction<Hospital | null>>;
+};
+
+const HospitalBlock: React.FC<HospitalBlockProps> = ({
+  hospital,
+  expanded,
+  setExpandedHospital,
+}) => {
+  const blockRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (expanded) {
-      blockRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (blockRef.current) {
+        blockRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     }
   }, [expanded]);
 
@@ -13,7 +34,7 @@ const HospitalBlock = ({ hospital, expanded, setExpandedHospital }) => {
     setExpandedHospital(expanded ? null : hospital);
   };
 
-  const isYesNo = (value) => {
+  const isYesNo = (value: string | undefined) => {
     return (
       value && (value.toLowerCase() === "yes" || value.toLowerCase() === "no")
     );
@@ -43,7 +64,7 @@ const HospitalBlock = ({ hospital, expanded, setExpandedHospital }) => {
           <div
             className={
               isYesNo(hospital.City)
-                ? hospital.City.toLowerCase() === "yes"
+                ? hospital.City?.toLowerCase() === "yes"
                   ? "text-green-500"
                   : "text-red-500"
                 : ""
@@ -53,7 +74,7 @@ const HospitalBlock = ({ hospital, expanded, setExpandedHospital }) => {
           <div
             className={
               isYesNo(hospital.State)
-                ? hospital.State.toLowerCase() === "yes"
+                ? hospital.State?.toLowerCase() === "yes"
                   ? "text-green-500"
                   : "text-red-500"
                 : ""

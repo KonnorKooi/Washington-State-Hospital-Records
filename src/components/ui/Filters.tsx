@@ -1,6 +1,14 @@
-import React from "react";
+import React, { ChangeEvent } from "react";
 
-const Filters = ({ checkboxFilters, handleCheckboxChange }) => {
+type CheckboxChangeHandler = (event: ChangeEvent<HTMLInputElement>) => void;
+
+const Filters = ({
+  checkboxFilters,
+  handleCheckboxChange,
+}: {
+  checkboxFilters: Record<string, boolean>;
+  handleCheckboxChange: CheckboxChangeHandler;
+}) => {
   return (
     <div className="grid grid-cols-2 gap-4 mt-3">
       {Object.keys(checkboxFilters).map((key) => (
