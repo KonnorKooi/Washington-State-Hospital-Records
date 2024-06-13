@@ -93,8 +93,8 @@ const HomePage: React.FC = () => {
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const term = event.target.value.toLowerCase();
     setSearchTerm(term);
-    console.log("apikey:", process.env.NEXT_PUBLIC_GOOGLE_API_KEY);
-    console.log("apikey:", process.env.NEXT_PUBLIC_MAP_ID);
+    // console.log("apikey:", process.env.NEXT_PUBLIC_GOOGLE_API_KEY);
+    // console.log("apikey:", process.env.NEXT_PUBLIC_MAP_ID);
   };
 
   useEffect(() => {
