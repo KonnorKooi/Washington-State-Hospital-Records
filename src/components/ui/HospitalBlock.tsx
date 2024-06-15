@@ -43,7 +43,7 @@ const HospitalBlock: React.FC<HospitalBlockProps> = ({
   return (
     <div
       ref={blockRef}
-      className="border p-4 rounded-md cursor-pointer mb-4"
+      className="border p-4 rounded-md cursor-pointer mb-4 bg-graywhite"
       onClick={toggleExpanded}>
       <div className="font-bold">{hospital.Hospital}</div>
       <div>

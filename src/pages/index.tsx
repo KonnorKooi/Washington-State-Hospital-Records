@@ -1,29 +1,18 @@
 "use client";
+
 import React, { useState, useEffect, useRef } from "react";
 import Navbar from "@/components/ui/Navbar";
-import Papa from "papaparse";
-import HospitalBlock from "@/components/ui/HospitalBlock";
-import MapComponent from "@/components/ui/MapComponent";
+import HospitalBlock from "@/components/ui/HospitalBlock"; // Ensure this path is correct
+import MapComponent from "@/components/ui/MapComponent"; // Ensure this path is correct
 import Filters from "@/components/ui/Filters";
-import { ScrollArea } from "@/components/ui/scroll-area";
-
-interface Hospital {
-  id: string;
-  Hospital: string;
-  City?: string;
-  State?: string;
-  Lat: string;
-  Long: string;
-  [key: string]: any; // For dynamic properties
-}
+import ScrollArea from "@/components/ui/ScrollArea"; // Default import instead of named import
+import { useFetchHospitals, Hospital } from "@/hooks/useFetchHospitals";
+import { metadata } from "../metadata";
 
 const HomePage: React.FC = () => {
-  const [hospitals, setHospitals] = useState<Hospital[]>([]);
+  const { hospitals, filteredHospitals, setFilteredHospitals } = useFetchHospitals();
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredHospitals, setFilteredHospitals] = useState<Hospital[]>([]);
-  const [expandedHospital, setExpandedHospital] = useState<Hospital | null>(
-    null
-  );
+  const [expandedHospital, setExpandedHospital] = useState<Hospital | null>(null);
   const hospitalRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [checkboxFilters, setCheckboxFilters] = useState({
     "Medication abortion": false,
@@ -61,35 +50,6 @@ const HomePage: React.FC = () => {
     setExpandedHospital(hospital);
   };
 
-  useEffect(() => {
-    fetch("/data/hospitals.csv")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.text();
-      })
-      .then((data) => {
-        Papa.parse(data, {
-          header: true,
-          skipEmptyLines: true,
-          complete: (result) => {
-            const parsedData = result.data.map((hospital: any) => ({
-              ...hospital,
-              lat: parseFloat(hospital.Lat),
-              long: parseFloat(hospital.Long),
-            }));
-            setHospitals(parsedData);
-            setFilteredHospitals(parsedData);
-          },
-          error: (error: any) => {
-            console.error("Error parsing the CSV file:", error);
-          },
-        });
-      })
-      .catch((error) => console.error("Error fetching the CSV file:", error));
-  }, []);
-
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const term = event.target.value.toLowerCase();
     setSearchTerm(term);
@@ -111,7 +71,7 @@ const HomePage: React.FC = () => {
     });
 
     setFilteredHospitals(filtered);
-  }, [searchTerm, checkboxFilters, hospitals]);
+  }, [searchTerm, checkboxFilters, hospitals, setFilteredHospitals]);
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = event.target;
@@ -119,18 +79,18 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col min-h-screen bg-graywhite font-poppins">
       <Navbar />
-      <div className="flex flex-1 w-full h-full flex-col lg:flex-row">
+      <div className="flex flex-1 w-full h-full flex-col lg:flex-row px-4 lg:px-20">
         <div className="flex flex-col w-full lg:w-3/4 p-5">
-          <div className="p-5 border border-gray-200 rounded-md mb-5">
-            <h2 className="text-2xl font-bold mb-3">Hospital Search</h2>
+          <div className="flex items-center justify-between p-3 border border-gray-300 rounded-md mb-5 bg-lightblue">
+            <h2 className="text-xl mb-0">Hospital Search</h2>
             <input
               type="text"
-              placeholder="Search hospitals..."
+              placeholder="Type here"
               value={searchTerm}
               onChange={handleSearch}
-              className="p-2 w-full border border-gray-300 rounded-md"
+              className="input input-bordered w-full lg:w-auto"
             />
           </div>
           <div className="flex-1">
@@ -141,15 +101,15 @@ const HomePage: React.FC = () => {
               onMarkerClick={handleMarkerClick}
             />
           </div>
-          <div className="p-5 border border-gray-200 rounded-md mt-5">
+          <div className="p-5 border border-gray-300 rounded-md mt-5">
             <Filters
               checkboxFilters={checkboxFilters}
               handleCheckboxChange={handleCheckboxChange}
             />
           </div>
         </div>
-        <div className="flex flex-col w-full lg:w-1/4 p-5 border-t border-gray-200 lg:border-t-0 lg:border-l">
-          <ScrollArea className="p-5 border border-gray-200 rounded-md overflow-y-auto flex-1">
+        <div className="flex flex-col w-full lg:w-1/4 p-5 h-full">
+          <ScrollArea className="p-5 border border-gray-300 rounded-md bg-lightblue overflow-y-auto" style={{ height: '800px' }}>
             {filteredHospitals.map((hospital, index) => (
               <div
                 key={index}

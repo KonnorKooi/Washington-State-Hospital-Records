@@ -9,8 +9,10 @@ const config: Config = {
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
   ],
-  prefix: "",
   theme: {
+    fontFamily: {
+      poppins: ['Poppins', 'sans-serif'],
+    },
     container: {
       center: true,
       padding: "2rem",
@@ -25,20 +27,20 @@ const config: Config = {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        primary: {
-          DEFAULT: "#8FC1E3", // New secondary color
+        lightblue: {
+          DEFAULT: "#8FC1E3",
           foreground: "hsl(var(--primary-foreground))",
         },
-        secondary: {
-          DEFAULT: "#F7F9FB", // New primary color
+        darkgreen: {
+          DEFAULT: "#687864",
           foreground: "hsl(var(--secondary-foreground))",
         },
-        accent: {
-          DEFAULT: "#5085A5", // New accent color
+        midblue: {
+          DEFAULT: "#5085A5",
           foreground: "hsl(var(--accent-foreground))",
         },
-        dark: "#31708E", // New dark color
-        text: "#000000", //"#687864", // New text color
+        darkblue: "#31708E",
+        graywhite: "#F7F9FB",
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
@@ -77,7 +79,27 @@ const config: Config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  daisyui: {
+    themes: [
+      {
+        mytheme: {
+          "primary": "#8FC1E3", // lightblue
+          "secondary": "#687864", // darkgreen
+          "accent": "#5085A5", // midblue
+          "neutral": "#3d4451", // default DaisyUI neutral color
+          "base-100": "#F7F9FB", // graywhite
+          "info": "#2094f3", // default DaisyUI info color
+          "success": "#009485", // default DaisyUI success color
+          "warning": "#ff9900", // default DaisyUI warning color
+          "error": "#ff5724", // default DaisyUI error color
+        },
+      },
+    ],
+  },
+  plugins: [
+    require("tailwindcss-animate"),
+    require('daisyui'),
+  ],
 };
 
 export default config;

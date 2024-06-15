@@ -7,7 +7,7 @@ import {
   InfoWindow,
   useAdvancedMarkerRef,
 } from "@vis.gl/react-google-maps";
-import "./MapComponent.css"; // Import the CSS file for styling
+import styles from './MapComponent.module.css'; // Import the CSS module
 
 const MapComponent = ({
   apiKey,
@@ -51,7 +51,7 @@ const MapComponent = ({
     <APIProvider
       apiKey={apiKey}
       onLoad={() => console.log("Maps API has loaded.")}>
-      <div className="map-container">
+      <div className={styles.mapContainer}>
         <Map
           zoom={mapZoom}
           center={mapCenter}

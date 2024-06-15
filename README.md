@@ -1,3 +1,39 @@
+Project Structure 
+
+/public
+  favicon.ico
+  /images
+    logo-removebg-preview.png
+/src
+  /components
+    /ui
+      Navbar.tsx
+      Filters.tsx
+      HospitalBlock.tsx
+      MapComponent.tsx
+      MapComponent.module.css
+      ScrollArea.tsx
+  /hooks
+    useFetchHospitals.ts
+  /styles
+    globals.css
+  /pages
+    _document.tsx
+    _app.js
+    index.tsx
+  metadata.ts
+/tailwind.config.js
+
+
+
+
+
+
+
+
+
+
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started

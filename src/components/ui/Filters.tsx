@@ -1,3 +1,4 @@
+// src/components/ui/Filters.tsx
 import React, { ChangeEvent } from "react";
 
 type CheckboxChangeHandler = (event: ChangeEvent<HTMLInputElement>) => void;
@@ -18,9 +19,9 @@ const Filters = ({
             name={key}
             checked={checkboxFilters[key]}
             onChange={handleCheckboxChange}
-            className="form-checkbox h-5 w-5 text-accent"
+            className="checkbox h-5 w-5 text-darkgreen"
           />
-          <span>{key}</span>
+          <span className="text-gray-700">{key}</span>
         </label>
       ))}
     </div>

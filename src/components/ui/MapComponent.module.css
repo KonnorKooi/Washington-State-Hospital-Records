@@ -1,0 +1,15 @@
+/* src/components/MapComponent.css */
+.mapContainer {
+  height: 600px;
+  /* Ensure it matches the hospital list container height */
+  width: 100%;
+  margin-bottom: 20px;
+  /* Add space below the map */
+}
+
+@media (max-width: 768px) {
+  .mapContainer {
+    height: 400px;
+    /* Adjust height for smaller screens */
+  }
+}

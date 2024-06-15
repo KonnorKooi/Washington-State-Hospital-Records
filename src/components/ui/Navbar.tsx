@@ -1,15 +1,35 @@
-// Navbar.js
-import React from "react";
+// src/components/ui/Navbar.tsx
+import React, { useState } from "react";
+import Image from 'next/image';
 
 const Navbar = () => {
+  const [activeTab, setActiveTab] = useState("reproductive");
+
   return (
-    <nav className="bg-primary w-full p-4 top-0">
-      <div className="w-full max-w-6xl">
-        <h1 className="text-text text-3xl font-bold pl-4">
-          WA Care Access Transparency Project
-        </h1>
+    <div className="navbar bg-darkblue">
+      <div className="flex-1 flex items-center">
+        <Image src="/images/logo_nobg.png" alt="Logo" width={40} height={40}  />
+        <a className="btn btn-ghost text-xl">WA Care Access Transparency Project</a>
       </div>
-    </nav>
+      <div className="flex-none">
+        <div role="tablist" className="tabs tabs-boxed">
+          <a
+            role="tab"
+            className={`tab ${activeTab === "reproductive" ? "tab-active" : ""}`}
+            onClick={() => setActiveTab("reproductive")}
+          >
+            Reproductive Info
+          </a>
+          <a
+            role="tab"
+            className={`tab ${activeTab === "end_of_life" ? "tab-active" : ""}`}
+            onClick={() => setActiveTab("end_of_life")}
+          >
+            End of Life Services Info
+          </a>
+        </div>
+      </div>
+    </div>
   );
 };
 
