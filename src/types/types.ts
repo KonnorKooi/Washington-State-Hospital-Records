@@ -4,7 +4,7 @@ export interface Hospital {
     Hospital: string;
     City?: string;
     State?: string;
-    Lat: string;
-    Long: string;
+    Lat: number;
+    Long: number;
     [key: string]: any; // For dynamic properties
 }

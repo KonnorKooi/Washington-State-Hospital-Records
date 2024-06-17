@@ -1,4 +1,3 @@
-// src/components/MapComponent.js
 import React, { useState } from "react";
 import {
   APIProvider,
@@ -7,21 +6,22 @@ import {
   InfoWindow,
   useAdvancedMarkerRef,
 } from "@vis.gl/react-google-maps";
-import styles from './MapComponent.module.css'; // Import the CSS module
+import styles from "./MapComponent.module.css";
 
-const MapComponent = ({
-  apiKey,
-  mapId,
-  hospitals,
-  onMarkerClick,
-}: {
+interface MapComponentProps {
   apiKey: string;
   mapId: string;
   hospitals: any[];
   onMarkerClick: (hospital: any) => void;
+}
+
+const MapComponent: React.FC<MapComponentProps> = ({
+  apiKey,
+  mapId,
+  hospitals,
+  onMarkerClick,
 }) => {
   const [infowindowOpen, setInfowindowOpen] = useState(false);
-  const [marker] = useAdvancedMarkerRef();
   const [mapCenter, setMapCenter] = useState({
     lat: 47.2,
     lng: -121,
@@ -35,30 +35,26 @@ const MapComponent = ({
   };
 
   const filteredHospitals = hospitals.filter((hospital) => {
-    // console.log("Hospital Object:", hospital);
     const lat = parseFloat(hospital.Lat);
     const long = parseFloat(hospital.Long);
-    // console.log("Parsed lat:", lat);
-    // console.log("Parsed long:", long);
     return !isNaN(lat) && !isNaN(long);
   });
 
-  // console.log("Filtered Hospitals:", filteredHospitals);
-  // console.log("Map Center:", mapCenter);
-  // console.log("Map Zoom:", mapZoom);
-
   return (
-    <APIProvider
-      apiKey={apiKey}
-      onLoad={() => console.log("Maps API has loaded.")}>
+    <APIProvider apiKey={apiKey} onLoad={() => console.log("Maps API has loaded.")}>
       <div className={styles.mapContainer}>
         <Map
           zoom={mapZoom}
           center={mapCenter}
           mapId={mapId}
-          onCameraChanged={handleCameraChange}>
+          streetViewControl={false}
+          fullscreenControl={false}
+          onCameraChanged={handleCameraChange}
+        >
           {filteredHospitals.map((hospital, index) => {
-            const { lat, long } = hospital;
+            const lat = parseFloat(hospital.Lat);
+            const long = parseFloat(hospital.Long);
+
             return (
               <AdvancedMarker
                 key={index}
@@ -72,14 +68,12 @@ const MapComponent = ({
             );
           })}
           {infowindowOpen && (
-            <InfoWindow
-              maxWidth={200}
-              onCloseClick={() => setInfowindowOpen(false)}>
+            <InfoWindow maxWidth={200} onCloseClick={() => setInfowindowOpen(false)}>
               This is an example for the{" "}
               <code style={{ whiteSpace: "nowrap" }}>
                 &lt;AdvancedMarker /&gt;
               </code>{" "}
-              combined with an Infowindow.
+              combined with an InfoWindow.
             </InfoWindow>
           )}
         </Map>

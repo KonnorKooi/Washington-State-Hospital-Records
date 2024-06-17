@@ -1,9 +1,8 @@
 /* src/components/MapComponent.css */
 .mapContainer {
-  height: 600px;
+  height: 580px;
   /* Ensure it matches the hospital list container height */
   width: 100%;
-  margin-bottom: 20px;
   /* Add space below the map */
 }
 

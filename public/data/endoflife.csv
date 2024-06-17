@@ -1,0 +1,19 @@
+Hospital,Address,City,State,Zip Code,Phone number,Contact,Date signed,Behavioral/Substance?,Recent enough for use?,Incorrect form?,Written Policies & Procedures on ACP and AD,Offers info and support for ACP,Asks patient about ACP,Assists patients with ACP,Provides EOL education,Provides treatment option evaluation,Provides hospice care,Provides palliative care,Provides spiritual care,Provides ethics consultation services,Provide referrals/resources for palliative care,Provides pain and symptom consultation,Reviews and Honors POLST,DWD: allows providers to participate,Provides DWD educational materiasl,Pharmacies dispense DWD medication,Patients can self-admin DWD medication at hospital,Comments?,Lat,Long
+Acadia Cascade Behavioral Health,,Burien,WA,,,,,TRUE,FALSE,FALSE,,,,,,,,,,,,,,,,,,,,
+"Arbor Health, Morton Hospital / Lewis County Hospital District No.1","521 Adams Avenue, PO Box 1138",Morton,WA,98356,360-496-3525,Robert Mach,11/16/2023,FALSE,TRUE,FALSE,Yes,Yes,Yes,Yes,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,Yes,No,Yes,No,No,No,46.55552,-122.28005
+Astria Regional Medical Center (formerly Yakima Regional Medical & Cardiac Center),,,,,,,,FALSE,FALSE,FALSE,,,,,,,,,,,,,,,,,,,,
+Astria Sunnyside Hospital,,,,,,,,FALSE,FALSE,FALSE,,,,,,,,,,,,,,,,,,,,
+Astria Toppenish Hospital,?? Links to wrong form,,,,,,,FALSE,FALSE,FALSE,,,,,,,,,,,,,,,,,,,,
+BHC Fairfax Hospital,,Kirkland,WA,,,,,TRUE,FALSE,FALSE,,,,,,,,,,,,,,,,,,,47.67551,-122.203362
+BHC Fairfax Hospital Monroe,,Monroe,WA,,,,,TRUE,FALSE,FALSE,,,,,,,,,,,,,,,,,,,47.85211,-121.9824
+BHC Fairfax Hospital North,,Everett,WA,,,,,TRUE,FALSE,FALSE,,,,,,,,,,,,,,,,,,,47.97913,-122.195892
+Cascade Medical Center / Chelan County Public Hospital District No. 1,817 Commerical street,Leavenworth,WA,98826,Natasha Pierstrup,509-548-5815,12/22/2023,FALSE,TRUE,FALSE,Yes,Yes,Yes,Yes,Yes,Yes,No,No,Yes,No,Yes,Yes,Yes,Yes,Yes,No,No,Yes,47.594471,-120.660728
+Columbia Basin Hospital,200 Nat Washington Way,Ephrata,WA,98823,Vicki Polhamus,509-717-5211,01-02-2024,FALSE,TRUE,FALSE,Yes,Yes,Yes,No,Yes,No,Yes,No,No,No,No,No,Yes,No,Yes,No,No,No,47.3144428,-119.5463633
+Confluence Health Hospital,1201 S. Miller Street,Wenatchee,WA,98801,Sarah Brown,509-662-1511,12/31/2023,FALSE,TRUE,FALSE,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,No,No,47.4234599,-120.310349
+Coulee Medical Center,411 Fortuyn Road,Grand Coulee,WA,99133,Ramona Hicks,509-449-8097,02/20/2024,FALSE,TRUE,FALSE,Yes,No,Yes,Yes,Yes,No,No,No,No,No,Yes,No,Yes,No,No,No,No,No,47.94238281,-119.005867
+Dayton General Hospital (Columbia County Public Hospital District #1) ** old/odd form,1012 South 3rd St.,Dayton,WA,99382,Shane McGuire,509-282-2531,12/26/2023,FALSE,TRUE,FALSE,Yes,Yes,Yes,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,Yes,Yes,See comments,See comments,See comments,See comments,No,46.3120361,-117.9705178
+East Adams Rural Hospital,,,,,,,,FALSE,FALSE,FALSE,,,,,,,,,,,,,,,,,,,,
+EvergreenHealth Medical Center (King County Public Hospital District #2),12040 NE 128th Street,Kirkland,WA,98034,Mary Shepler,425-899-3479,11/17/2023,FALSE,TRUE,FALSE,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,No,No,47.7164381,-122.1802051
+EvergreenHealth Monroe (formerly Valley General Hospital) (Snohomich County Public Hospital District No. 1),14701 179th Ave SE,Monroe,WA,98272,Megan Wirsching,360-794-189,01/16/2024,FALSE,TRUE,FALSE,Yes,Yes,Yes,Yes,Yes,Yes,No,No,No,Yes,Yes,Yes,Yes,No,No,No,No,No,47.8642196,-121.9894561
+Ferry County Memorial Hospital (Ferry County Public Hospital District),36 Klondike Rd,Republic,WA,99166,Jennifer Reed,509-775-8242,01/16/2024,FALSE,TRUE,FALSE,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,48.6522021,-118.7337345
+Forks Community Hospital,530 Bogachiel Way,Forks,WA,98331,Kelly Thompson,360-374-6271,11/16/2023,FALSE,TRUE,FALSE,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,No,No,No,47.9463652,-124.3932652
