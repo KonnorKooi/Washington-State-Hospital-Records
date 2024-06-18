@@ -13,8 +13,8 @@ const Navbar = ({ onTabChange }: { onTabChange: (tab: string) => void }) => {
     <div className="navbar bg-darkblue flex flex-col lg:flex-row">
       <div className="flex-1 flex items-center">
         <Image src="/images/logo_nobg.png" alt="Logo" width={40} height={40} />
-        <div className="ml-2 text-2xl text-black">
-          WA Care Access Transparency Project
+        <div className="ml-2 text-2xl text-graywhite">
+          WA Care Access Transparency
         </div>
       </div>
       <div className="flex-none mt-2 lg:mt-0">
