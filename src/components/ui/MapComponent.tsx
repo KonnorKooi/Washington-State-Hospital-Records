@@ -41,7 +41,9 @@ const MapComponent: React.FC<MapComponentProps> = ({
   });
 
   return (
-    <APIProvider apiKey={apiKey} onLoad={() => console.log("Maps API has loaded.")}>
+    <APIProvider
+      apiKey={apiKey}
+      onLoad={() => console.log("Maps API has loaded.")}>
       <div className={styles.mapContainer}>
         <Map
           zoom={mapZoom}
@@ -49,8 +51,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
           mapId={mapId}
           streetViewControl={false}
           fullscreenControl={false}
-          onCameraChanged={handleCameraChange}
-        >
+          onCameraChanged={handleCameraChange}>
           {filteredHospitals.map((hospital, index) => {
             const lat = parseFloat(hospital.Lat);
             const long = parseFloat(hospital.Long);
@@ -67,15 +68,6 @@ const MapComponent: React.FC<MapComponentProps> = ({
               />
             );
           })}
-          {infowindowOpen && (
-            <InfoWindow maxWidth={200} onCloseClick={() => setInfowindowOpen(false)}>
-              This is an example for the{" "}
-              <code style={{ whiteSpace: "nowrap" }}>
-                &lt;AdvancedMarker /&gt;
-              </code>{" "}
-              combined with an InfoWindow.
-            </InfoWindow>
-          )}
         </Map>
       </div>
     </APIProvider>

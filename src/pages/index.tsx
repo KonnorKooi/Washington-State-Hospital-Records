@@ -6,14 +6,18 @@ import HospitalBlock from "@/components/ui/HospitalBlock";
 import MapComponent from "@/components/ui/MapComponent";
 import Filters from "@/components/ui/Filters";
 import ScrollArea from "@/components/ui/ScrollArea";
+import Footer from "@/components/ui/Footer"; // Import the Footer component
 import { useFetchHospitals, Hospital } from "@/hooks/useFetchHospitals";
-import { metadata } from "../metadata";
+import FooterKonnor from "@/components/ui/FooterKonnor";
 
 const HomePage: React.FC = () => {
   const [activeTab, setActiveTab] = useState("reproductive");
-  const { hospitals, filteredHospitals, setFilteredHospitals } = useFetchHospitals(activeTab);
+  const { hospitals, filteredHospitals, setFilteredHospitals } =
+    useFetchHospitals(activeTab);
   const [searchTerm, setSearchTerm] = useState("");
-  const [expandedHospital, setExpandedHospital] = useState<Hospital | null>(null);
+  const [expandedHospital, setExpandedHospital] = useState<Hospital | null>(
+    null
+  );
   const hospitalRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const reproductiveFilters = {
@@ -69,13 +73,16 @@ const HomePage: React.FC = () => {
 
   const [checkboxFilters, setCheckboxFilters] = useState(reproductiveFilters);
 
- useEffect(() => {
-   const newFilters = activeTab === "reproductive" ? { ...reproductiveFilters } : { ...endOfLifeFilters };
-   setCheckboxFilters((prevFilters) => ({
-     ...prevFilters,
-     ...newFilters,
-   }));
- }, [activeTab]);
+  useEffect(() => {
+    const newFilters =
+      activeTab === "reproductive"
+        ? { ...reproductiveFilters }
+        : { ...endOfLifeFilters };
+    setCheckboxFilters((prevFilters) => ({
+      ...prevFilters,
+      ...newFilters,
+    }));
+  }, [activeTab]);
 
   const handleMarkerClick = (hospital: Hospital) => {
     const index = hospitals.indexOf(hospital);
@@ -120,55 +127,63 @@ const HomePage: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen bg-graywhite font-poppins">
       <Navbar onTabChange={setActiveTab} />
-      <div className="flex flex-1 w-full h-full flex-col lg:flex-row px-4 lg:px-20">
-        <div className="flex flex-col w-full lg:w-3/4 p-5">
-          <div className="flex items-center justify-between p-3 border border-gray-300 rounded-md mb-5 bg-lightblue">
-            <h2 className="text-xl mb-0">Hospital Search</h2>
-            <input
-              type="text"
-              placeholder="Type here"
-              value={searchTerm}
-              onChange={handleSearch}
-              className="input input-bordered w-full lg:w-auto"
-            />
-          </div>
-          <div className="border border-gray-300 rounded-md">
-            <MapComponent
-              apiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY ?? ""}
-              mapId={process.env.NEXT_PUBLIC_MAP_ID ?? ""}
-              hospitals={filteredHospitals}
-              onMarkerClick={handleMarkerClick}
-            />
-          </div>
-          <div className="mt-5">
-            <Filters
-              checkboxFilters={checkboxFilters}
-              handleCheckboxChange={handleCheckboxChange}
-              filterOptions={Object.keys(checkboxFilters)}
-            />
-          </div>
-        </div>
-        <div className="flex flex-col w-full lg:w-1/4 p-5 h-full">
-          <ScrollArea className="p-5 border border-gray-300 rounded-md bg-lightblue overflow-y-auto" style={{ height: '800px' }}>
-            {filteredHospitals.map((hospital, index) => (
-              <div
-                key={index}
-                ref={(el) => {
-                  if (el) {
-                    hospitalRefs.current[index] = el;
-                  }
-                }}>
-                <HospitalBlock
-                  key={hospital.id}
-                  hospital={hospital}
-                  expanded={expandedHospital === hospital}
-                  setExpandedHospital={handleSetExpandedHospital}
+      <div className="flex-1 w-full px-4 lg:px-40 mt-4 mb-5">
+        <div className="flex flex-col lg:flex-row">
+          <div className="flex flex-col w-full lg:w-2/3 p-5">
+            <div className="flex flex-col flex-1">
+              <div className="flex items-center justify-between p-3 border border-gray-300 rounded-md mb-5 bg-lightblue">
+                <h2 className="text-xl mb-0">Hospital Search</h2>
+                <input
+                  type="text"
+                  placeholder="Type here"
+                  value={searchTerm}
+                  onChange={handleSearch}
+                  className="input input-bordered w-full lg:w-auto"
                 />
               </div>
-            ))}
-          </ScrollArea>
+              <div className="flex-1 border border-gray-300 rounded-md min-h-[300px]">
+                <MapComponent
+                  apiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY ?? ""}
+                  mapId={process.env.NEXT_PUBLIC_MAP_ID ?? ""}
+                  hospitals={filteredHospitals}
+                  onMarkerClick={handleMarkerClick}
+                />
+              </div>
+              <div className="mt-5">
+                <Filters
+                  checkboxFilters={checkboxFilters}
+                  handleCheckboxChange={handleCheckboxChange}
+                  filterOptions={Object.keys(checkboxFilters)}
+                />
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col w-full lg:w-1/3 p-5 h-full">
+            <ScrollArea
+              className="p-5 border border-gray-300 rounded-md bg-lightblue overflow-y-auto"
+              style={{ height: "800px" }}>
+              {filteredHospitals.map((hospital, index) => (
+                <div
+                  key={index}
+                  ref={(el) => {
+                    if (el) {
+                      hospitalRefs.current[index] = el;
+                    }
+                  }}>
+                  <HospitalBlock
+                    key={hospital.id}
+                    hospital={hospital}
+                    expanded={expandedHospital === hospital}
+                    setExpandedHospital={handleSetExpandedHospital}
+                  />
+                </div>
+              ))}
+            </ScrollArea>
+          </div>
         </div>
       </div>
+      <Footer />
+      <FooterKonnor />
     </div>
   );
 };
