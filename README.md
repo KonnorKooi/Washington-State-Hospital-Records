@@ -1,72 +1,103 @@
-Project Structure 
+# Washington Health Project
 
-/public
-  favicon.ico
-  /images
-    logo-removebg-preview.png
-/src
-  /components
-    /ui
-      Navbar.tsx
-      Filters.tsx
-      HospitalBlock.tsx
-      MapComponent.tsx
-      MapComponent.module.css
-      ScrollArea.tsx
-  /hooks
-    useFetchHospitals.ts
-  /styles
-    globals.css
-  /pages
-    _document.tsx
-    _app.js
-    index.tsx
-  metadata.ts
-/tailwind.config.js
+This project is a web application that provides information about healthcare services in Washington state, focusing on reproductive health and end-of-life services.
 
+## Features
 
+-   Interactive map of Washington state hospitals
+-   Detailed information about each hospital's services
+-   Filtering options for specific healthcare services
+-   Responsive design for desktop and mobile devices
 
+## Project Structure
 
-
-
-
-
-
-
-
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+```
+/
+├── public/
+│   ├── data/
+│   │   ├── endoflife.csv
+│   │   └── reproductive.csv
+│   ├── images/
+│   │   ├── logo.png
+│   │   └── logo_nobg.png
+│   └── favicon.ico
+├── src/
+│   ├── components/
+│   │   └── ui/
+│   │       ├── Filters.tsx
+│   │       ├── Footer.tsx
+│   │       ├── FooterKonnor.tsx
+│   │       ├── HospitalBlock.tsx
+│   │       ├── MapComponent.tsx
+│   │       ├── MapComponent.module.css
+│   │       ├── Navbar.tsx
+│   │       └── ScrollArea.tsx
+│   ├── hooks/
+│   │   └── useFetchHospitals.ts
+│   ├── lib/
+│   │   └── utils.ts
+│   ├── pages/
+│   │   ├── _app.js
+│   │   ├── _document.tsx
+│   │   └── index.tsx
+│   ├── styles/
+│   │   └── globals.css
+│   ├── types/
+│   │   └── types.ts
+│   └── utils/
+│       └── renderProperty.tsx
+├── .eslintrc.json
+├── .gitignore
+├── next.config.mjs
+├── package.json
+├── postcss.config.mjs
+├── tailwind.config.ts
+└── tsconfig.json
+```
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the repository
+2. Install dependencies:
+    ```
+    npm install
+    ```
+3. Set up environment variables:
+    - Create a `.env.local` file in the root directory
+    - Add the following variables:
+        ```
+        NEXT_PUBLIC_GOOGLE_API_KEY=your_google_maps_api_key
+        NEXT_PUBLIC_MAP_ID=your_google_maps_id
+        ```
+4. Run the development server:
+    ```
+    npm run dev
+    ```
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Technologies Used
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+-   Next.js
+-   React
+-   TypeScript
+-   Tailwind CSS
+-   DaisyUI
+-   Google Maps API
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Contributing
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-## Learn More
+## License
 
-To learn more about Next.js, take a look at the following resources:
+This project is open source and available under the [MIT License](LICENSE).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Todo
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+-- Consolidating styles and ensuring consistent use of Tailwind CSS throughout the project.
+-- Improving accessibility by adding proper ARIA labels and roles where necessary.
+-- Enhancing error handling and loading states for data fetching.
+-- Adding unit and integration tests to ensure reliability.
+-- Optimizing performance, particularly for the map component and large data sets.
+-- Implementing server-side rendering or static site generation for improved SEO and initial load times.
+-- Adding more detailed documentation for each component and function.
