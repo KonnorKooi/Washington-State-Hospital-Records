@@ -94,10 +94,10 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## Todo
 
--- Consolidating styles and ensuring consistent use of Tailwind CSS throughout the project.
--- Improving accessibility by adding proper ARIA labels and roles where necessary.
--- Enhancing error handling and loading states for data fetching.
--- Adding unit and integration tests to ensure reliability.
--- Optimizing performance, particularly for the map component and large data sets.
--- Implementing server-side rendering or static site generation for improved SEO and initial load times.
--- Adding more detailed documentation for each component and function.
+-   Consolidating styles and ensuring consistent use of Tailwind CSS throughout the project.
+-   Improving accessibility by adding proper ARIA labels and roles where necessary.
+-   Enhancing error handling and loading states for data fetching.
+-   Adding unit and integration tests to ensure reliability.
+-   Optimizing performance, particularly for the map component and large data sets.
+-   Implementing server-side rendering or static site generation for improved SEO and initial load times.
+-   Adding more detailed documentation for each component and function.
