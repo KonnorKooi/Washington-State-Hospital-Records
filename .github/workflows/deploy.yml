@@ -13,14 +13,20 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: "22"
           cache: "npm"
 
       - run: npm ci
+
+      # MUST come first. src/data/generated/ is gitignored, so until this runs
+      # there is no hospitals.json for typecheck, tests, or the build to
+      # import. This also fails the deploy on invalid source data.
+      - name: Build and validate hospital data
+        run: npm run build:data
 
       # Gate the deploy on the same checks CI runs, so main can never ship
       # data that fails validation.
@@ -30,7 +36,6 @@ jobs:
       - name: Unit tests
         run: npm test
 
-      # Runs prebuild -> build:data, then emits out/
       - name: Build static export
         run: npm run build
 

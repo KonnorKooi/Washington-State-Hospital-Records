@@ -89,14 +89,17 @@ builds, and rsyncs `out/` to `/var/www/wahealth.konnorkooi.com/` on deb-server.
 These are one-time and all need `sudo` on the server, so they have to be done
 by hand. Full commands are at the top of `deploy/nginx-wahealth.conf.example`.
 
-1. **DNS** — `wahealth.konnorkooi.com` does not resolve yet. Add the record in
-   Cloudflare, set to **DNS only** (grey cloud) until certbot has issued the
-   cert, or the HTTP-01 challenge is answered by Cloudflare's edge rather than
-   the origin.
+1. **DNS** — add `wahealth.konnorkooi.com` in Cloudflare, set to **DNS only**
+   (grey cloud) until certbot has issued the cert, or the HTTP-01 challenge is
+   answered by Cloudflare's edge rather than the origin.
 2. **Docroot** — `sudo mkdir -p /var/www/wahealth.konnorkooi.com` owned by
    `konnor`, so the rsync can write to it.
-3. **nginx + TLS** — install the site config, symlink it into `sites-enabled`,
-   run `sudo certbot --nginx -d wahealth.konnorkooi.com`, reload.
+3. **nginx + TLS, in two stages.** The final config references a certificate
+   that does not exist yet, and an nginx config that fails `nginx -t` blocks
+   reloads for _every_ site on the box. So install
+   `nginx-wahealth-bootstrap.conf.example` first (HTTP-only, serves the ACME
+   challenge), run `certbot certonly --webroot`, then replace it with
+   `nginx-wahealth.conf.example`.
 4. **GitHub secrets** — add `SSH_PRIVATE_KEY`, `REMOTE_HOST`, `REMOTE_USER` to
    this repository. Secrets are per-repository, so the ones on
    Personal-Portfolio do not carry over even though the values are the same.

@@ -1,0 +1,47 @@
+# ------------------------------------------------------------------
+# STAGE 1 of 2 — HTTP-only bootstrap config for wahealth.konnorkooi.com
+#
+# Why this file exists:
+#
+# The final config (nginx-wahealth.conf.example) references
+# /etc/letsencrypt/live/wahealth.konnorkooi.com/fullchain.pem. Until certbot
+# has issued that cert, the file does not exist, `nginx -t` fails, and nginx
+# refuses to reload — which also stops `certbot --nginx` from working, since
+# it runs `nginx -t` before doing anything. Chicken and egg.
+#
+# So: install THIS first, get the cert, then swap in the real config.
+#
+# It also serves the ACME HTTP-01 challenge, which the final config cannot do
+# on its own — the final config's port 80 block is a bare redirect to https.
+#
+#   sudo cp .../wahealth-bootstrap.conf \
+#           /etc/nginx/sites-available/wahealth.konnorkooi.com
+#   sudo nginx -t && sudo systemctl reload nginx
+#   sudo certbot certonly --webroot -w /var/www/wahealth.konnorkooi.com \
+#           -d wahealth.konnorkooi.com
+#   # then install nginx-wahealth.conf.example over the same path
+#
+# DNS must already resolve to this server, set to DNS-only (grey cloud) in
+# Cloudflare — a proxied record means Cloudflare's edge answers the challenge
+# instead of this origin.
+# ------------------------------------------------------------------
+
+server {
+    listen 80;
+    server_name wahealth.konnorkooi.com;
+
+    root /var/www/wahealth.konnorkooi.com;
+    index index.html;
+
+    # certbot writes its challenge token under this path.
+    location /.well-known/acme-challenge/ {
+        allow all;
+    }
+
+    # Serving the site over plain HTTP here is intentional and temporary: it
+    # lets you confirm the deploy landed before TLS is in play. The final
+    # config replaces this with a 301 to https.
+    location / {
+        try_files $uri $uri/ $uri.html =404;
+    }
+}
