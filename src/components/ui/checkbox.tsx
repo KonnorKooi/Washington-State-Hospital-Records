@@ -18,15 +18,16 @@ export function Checkbox({
   return (
     <CheckboxPrimitive.Root
       className={cn(
-        "peer size-5 shrink-0 rounded border-2 border-midblue bg-white transition-colors",
-        "data-[state=checked]:border-darkblue data-[state=checked]:bg-darkblue data-[state=checked]:text-white",
+        "peer size-4 shrink-0 rounded-[4px] border border-line-strong bg-surface transition-colors",
+        "hover:border-brand",
+        "data-[state=checked]:border-brand data-[state=checked]:bg-brand data-[state=checked]:text-brand-ink",
         "disabled:cursor-not-allowed disabled:opacity-50",
         className,
       )}
       {...props}
     >
       <CheckboxPrimitive.Indicator className="flex items-center justify-center text-current">
-        <Check className="size-4" strokeWidth={3} aria-hidden="true" />
+        <Check className="size-3" strokeWidth={3.5} aria-hidden="true" />
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>
   );

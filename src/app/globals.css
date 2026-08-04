@@ -4,44 +4,91 @@
 /*
  * Tailwind v4 is CSS-first: this @theme block replaces the old
  * tailwind.config.ts. Every custom property below generates utilities
- * (--color-darkblue -> bg-darkblue, text-darkblue, border-darkblue, ...).
+ * (--color-brand -> bg-brand, text-brand, border-brand, ...).
+ *
+ * The palette is *semantic*, not literal: components ask for `surface` or
+ * `ink-muted`, never `#31708e`. Components therefore carry no colour decisions
+ * of their own — retheming the whole app means editing this block.
+ *
+ * The site is light-only by design. `color-scheme: light` below tells the
+ * browser so explicitly, which keeps form controls and scrollbars from being
+ * rendered dark against a light page on a machine set to dark mode.
  */
 @theme {
-  /* Brand palette, carried over from the v3 config. */
+  /* Original brand hues, kept so the identity carries over. */
   --color-lightblue: #8fc1e3;
-  --color-darkgreen: #687864;
   --color-midblue: #5085a5;
   --color-darkblue: #31708e;
+  --color-darkgreen: #687864;
   --color-graywhite: #f7f9fb;
 
-  /* Semantic aliases so components don't hardcode brand names. */
-  --color-brand: var(--color-darkblue);
-  --color-brand-muted: var(--color-lightblue);
+  /* --- Surfaces ------------------------------------------------------- */
+  /* canvas: the page. surface: cards. sunken: wells inside cards. */
+  --color-canvas: #eef2f6;
   --color-surface: #ffffff;
-  --color-surface-sunken: var(--color-graywhite);
+  --color-surface-sunken: #f4f7fa;
+  --color-surface-raised: #ffffff;
+  --color-header: #21536b;
+  --color-header-ink: #ffffff;
+  --color-header-ink-muted: #b9d7e8;
+
+  /* --- Lines ---------------------------------------------------------- */
+  --color-line: #dde5ed;
+  --color-line-strong: #c2d1dd;
+
+  /* --- Text ----------------------------------------------------------- */
+  --color-ink: #0f1f2a;
+  --color-ink-muted: #47606f;
+  --color-ink-subtle: #6d8493;
+
+  /* --- Brand accents -------------------------------------------------- */
+  --color-brand: #276d8c;
+  --color-brand-hover: #1d5670;
+  --color-brand-ink: #ffffff;
+  --color-brand-subtle: #e3eef4;
+  --color-brand-line: #a9cbdd;
 
   /*
-   * Service availability states. These are darker than Tailwind's -500
-   * shades so they clear 4.5:1 against white — the old code used
-   * text-green-500 / text-red-500, which do not.
+   * --- Service availability -------------------------------------------
+   * Four states, never signalled by colour alone — every use pairs these
+   * with an icon or a glyph (WCAG 1.4.1). The greens and reds are darker
+   * than Tailwind's -500 shades so they clear 4.5:1 on white; the old code
+   * used text-green-500 / text-red-500, which do not.
    */
   --color-service-yes: #15803d;
-  --color-service-no: #b91c1c;
-  --color-service-partial: #a16207;
-  --color-service-unknown: #52525b;
+  --color-service-no: #b3261e;
+  --color-service-partial: #91620b;
+  --color-service-unknown: #5c7383;
+
+  /* Matrix cell fills: solid chips, so they carry their own foreground. */
+  --color-cell-yes: #157f4a;
+  --color-cell-yes-ink: #ffffff;
+  --color-cell-partial: #b07d10;
+  --color-cell-partial-ink: #ffffff;
+  --color-cell-no: #e6ecf1;
+  --color-cell-no-ink: #7c93a2;
+  --color-cell-unknown-ink: #b3c2cc;
 
   --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+
+  /* A tighter scale than Tailwind's default for dense tabular UI. */
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1rem;
 }
 
 @layer base {
   html {
     scroll-behavior: smooth;
+    color-scheme: light;
+    /* Keeps sticky headers clear of anchor targets and scrollIntoView. */
+    scroll-padding-top: 8rem;
   }
 
   body {
-    background-color: var(--color-surface-sunken);
-    color: #1f2937;
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
     font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
   }
 
   /*
@@ -49,9 +96,34 @@
    * focus styling at all, and several controls were non-focusable divs.
    */
   :focus-visible {
-    outline: 2px solid var(--color-darkblue);
+    outline: 2px solid var(--color-brand);
     outline-offset: 2px;
-    border-radius: 2px;
+    border-radius: 3px;
+  }
+
+  /* Tabular figures keep the coverage counts from jittering as they change. */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer components {
+  /*
+   * Column headers in the service matrix. 26 columns will not fit with
+   * horizontal labels, so they read bottom-to-top. `vertical-rl` plus a
+   * 180deg rotation is the combination that keeps the text upright-left
+   * rather than mirrored.
+   *
+   * Wrapping is left on deliberately: a label longer than the header is tall
+   * breaks onto a second vertical line inside the same 34px column, which is
+   * what keeps the header from having to be as tall as the longest label in
+   * the set.
+   */
+  .matrix-vlabel {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    text-align: left;
+    line-height: 1.25;
   }
 }
 
