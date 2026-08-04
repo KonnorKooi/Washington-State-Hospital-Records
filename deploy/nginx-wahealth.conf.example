@@ -1,0 +1,122 @@
+# ------------------------------------------------------------------
+# nginx server block for wahealth.konnorkooi.com
+# (static Next.js export, deployed by .github/workflows/deploy.yml)
+#
+# Written to match the conventions already used on deb-server by
+# konnorkooi.com and zotero.konnorkooi.com: one file per site in
+# sites-available, symlinked into sites-enabled, certbot-managed certs, and
+# the same ssl_protocols / ssl_ciphers lines.
+#
+# This lives ON THE SERVER. The GitHub Action only rsyncs the built out/
+# files into the web root; it never touches nginx.
+#
+# ---- One-time setup (all steps need sudo) ----
+#
+#   0. DNS FIRST. wahealth.konnorkooi.com currently does not resolve. Add the
+#      record in Cloudflare (konnorkooi.com is proxied through it). Set it to
+#      "DNS only" (grey cloud) until certbot has issued the cert, otherwise
+#      the HTTP-01 challenge is answered by Cloudflare's edge, not this
+#      server. You can switch it back to proxied afterwards.
+#
+#   1. sudo mkdir -p /var/www/wahealth.konnorkooi.com
+#      sudo chown -R konnor:konnor /var/www/wahealth.konnorkooi.com
+#      (matching /var/www/konnorkooi.com, which the deploy user owns —
+#       the rsync in the Action runs as konnor and must be able to write.)
+#
+#   2. sudo cp deploy/nginx-wahealth.conf.example \
+#              /etc/nginx/sites-available/wahealth.konnorkooi.com
+#      sudo ln -s /etc/nginx/sites-available/wahealth.konnorkooi.com \
+#                 /etc/nginx/sites-enabled/
+#
+#   3. sudo certbot --nginx -d wahealth.konnorkooi.com
+#      (fills in / confirms the ssl_certificate lines below)
+#
+#   4. sudo nginx -t && sudo systemctl reload nginx
+#
+# ---- Verify ----
+#   curl -sI https://wahealth.konnorkooi.com | grep -i -E 'content-security|strict-transport|x-frame'
+#   Then load the site and confirm the map draws pins. A grey, empty map means
+#   the CSP connect-src does not allow the tile host.
+# ------------------------------------------------------------------
+
+server {
+    listen 80;
+    server_name wahealth.konnorkooi.com;
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name wahealth.konnorkooi.com;
+
+    ssl_certificate /etc/letsencrypt/live/wahealth.konnorkooi.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/wahealth.konnorkooi.com/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+
+    root /var/www/wahealth.konnorkooi.com;
+    index index.html;
+
+    # --- Security headers ---
+    #
+    # These are declared ONCE, at server level, and deliberately not repeated
+    # in any location block. An `add_header` inside a location replaces every
+    # inherited add_header, so the location blocks below use `expires` for
+    # caching instead — `expires` sets Cache-Control without disturbing
+    # inheritance. Add an `add_header` to a location and you silently drop
+    # every header here for those files.
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Permissions-Policy "camera=(), microphone=(), geolocation=(), browsing-topics=()" always;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+
+    # 'unsafe-inline' is required in two places and cannot be dropped:
+    #
+    #   script-src: a Next.js static export bootstraps hydration with inline
+    #     <script> tags (self.__next_f.push(...)) carrying the prerendered
+    #     payload. Without it every one is blocked and the page never
+    #     hydrates — no map, no filters, no search. A nonce is the usual
+    #     answer but needs a server to mint one per request, and this is a
+    #     static export. Hashes change on every build.
+    #
+    #   style-src: MapLibre sets inline styles on the controls and markers it
+    #     creates at runtime.
+    #
+    # connect-src and worker-src are what make the map work: MapLibre fetches
+    # vector tiles, glyphs and sprites from the tile host inside a worker.
+    # If you change NEXT_PUBLIC_MAP_STYLE_URL, update connect-src to match.
+    #
+    # This exact policy is regression-tested by e2e/csp.spec.ts, which parses
+    # it out of this file and serves the real build behind it.
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; worker-src 'self' blob:; child-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://tiles.openfreemap.org; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'" always;
+
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 256;
+    gzip_types text/plain text/css application/javascript application/json
+               image/svg+xml application/xml;
+
+    # next.config.ts sets trailingSlash, so routes export as <route>/index.html.
+    location / {
+        try_files $uri $uri/ $uri.html =404;
+    }
+
+    # Hashed build assets are immutable.
+    location /_next/static/ {
+        expires 1y;
+        access_log off;
+    }
+
+    location ~* \.(?:woff2?|png|jpe?g|webp|avif|svg|ico)$ {
+        expires 30d;
+        access_log off;
+    }
+
+    # HTML must revalidate so a deploy is visible immediately.
+    location ~* \.html$ {
+        expires -1;
+    }
+
+    error_page 404 /404.html;
+}

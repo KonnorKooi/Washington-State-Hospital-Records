@@ -1,103 +1,139 @@
-# Washington Health Project
+# Washington Care Access
 
-This project is a web application that provides information about healthcare services in Washington state, focusing on reproductive health and end-of-life services.
+Which Washington state hospitals provide reproductive health and end-of-life
+services, based on the policies each facility files with the state Department
+of Health.
 
-## Features
+Live at **https://wahealth.konnorkooi.com**
 
--   Interactive map of Washington state hospitals
--   Detailed information about each hospital's services
--   Filtering options for specific healthcare services
--   Responsive design for desktop and mobile devices
+## Stack
 
-## Project Structure
+| Concern    | Choice                                                  |
+| ---------- | ------------------------------------------------------- |
+| Framework  | Next.js 16 (App Router), static export                  |
+| UI         | React 19, TypeScript (strict)                           |
+| Styling    | Tailwind CSS v4 (CSS-first `@theme`, no JS config file) |
+| Components | Radix primitives in the shadcn/ui style                 |
+| Map        | MapLibre GL via react-map-gl — no API key, no billing   |
+| URL state  | nuqs — filters and search live in the query string      |
+| Data       | CSV → Zod validation → typed JSON, at build time        |
+| Tests      | Vitest + Testing Library, Playwright                    |
+| Deploy     | GitHub Actions → rsync → nginx                          |
 
-```
-/
-├── public/
-│   ├── data/
-│   │   ├── endoflife.csv
-│   │   └── reproductive.csv
-│   ├── images/
-│   │   ├── logo.png
-│   │   └── logo_nobg.png
-│   └── favicon.ico
-├── src/
-│   ├── components/
-│   │   └── ui/
-│   │       ├── Filters.tsx
-│   │       ├── Footer.tsx
-│   │       ├── FooterKonnor.tsx
-│   │       ├── HospitalBlock.tsx
-│   │       ├── MapComponent.tsx
-│   │       ├── MapComponent.module.css
-│   │       ├── Navbar.tsx
-│   │       └── ScrollArea.tsx
-│   ├── hooks/
-│   │   └── useFetchHospitals.ts
-│   ├── lib/
-│   │   └── utils.ts
-│   ├── pages/
-│   │   ├── _app.js
-│   │   ├── _document.tsx
-│   │   └── index.tsx
-│   ├── styles/
-│   │   └── globals.css
-│   ├── types/
-│   │   └── types.ts
-│   └── utils/
-│       └── renderProperty.tsx
-├── .eslintrc.json
-├── .gitignore
-├── next.config.mjs
-├── package.json
-├── postcss.config.mjs
-├── tailwind.config.ts
-└── tsconfig.json
+## Getting started
+
+```bash
+npm install
+npm run dev     # runs build:data first, then serves on :3000
 ```
 
-## Getting Started
+No API keys or `.env` file are required. Map tiles come from
+[OpenFreeMap](https://openfreemap.org/), which needs no account. To use a
+different tile provider, set `NEXT_PUBLIC_MAP_STYLE_URL` — and update the CSP
+in `deploy/security-headers.conf` to allow the new host, or the map will render
+blank.
 
-1. Clone the repository
-2. Install dependencies:
-    ```
-    npm install
-    ```
-3. Set up environment variables:
-    - Create a `.env.local` file in the root directory
-    - Add the following variables:
-        ```
-        NEXT_PUBLIC_GOOGLE_API_KEY=your_google_maps_api_key
-        NEXT_PUBLIC_MAP_ID=your_google_maps_id
-        ```
-4. Run the development server:
-    ```
-    npm run dev
-    ```
-5. Open [http://localhost:3000](http://localhost:3000) in your browser
+| Command              | What it does                                        |
+| -------------------- | --------------------------------------------------- |
+| `npm run build:data` | CSV → validated `src/data/generated/hospitals.json` |
+| `npm run dev`        | Dev server                                          |
+| `npm run build`      | Static export into `out/`                           |
+| `npm run preview`    | Serve the built `out/` directory                    |
+| `npm test`           | Unit tests                                          |
+| `npm run test:e2e`   | Playwright (needs `npm run build` first)            |
+| `npm run typecheck`  | `tsc --noEmit`                                      |
+| `npm run lint`       | ESLint                                              |
 
-## Technologies Used
+## How the data works
 
--   Next.js
--   React
--   TypeScript
--   Tailwind CSS
--   DaisyUI
--   Google Maps API
+The two CSVs in `public/data/` are the source of truth, edited by hand or
+exported from a spreadsheet. `scripts/build-data.ts` turns them into typed JSON
+at build time.
 
-## Contributing
+**`src/data/schema.ts` is the contract.** Every filterable service is declared
+there once, with the exact CSV column it reads from. The build asserts that the
+declarations and the CSV headers agree in both directions, and **fails** if they
+don't.
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+That check exists because of a real bug: the previous version hardcoded filter
+labels in the page component and matched them against raw CSV headers at
+runtime. Two were misspelled relative to the data (`miscarraiges`, `materiasl`),
+so those filters matched nothing — silently, forever. A mismatch is now a build
+failure rather than a dead checkbox.
+
+The build also:
+
+- normalizes each cell to `yes` / `no` / `see-comments` / `unknown`. **`See
+comments` is its own state**; the old code tested `=== "yes"` and so hid those
+  facilities as though they were a "no".
+- merges the two files into one record per hospital, using an explicit alias map
+  (`CANONICAL_NAME_ALIASES`) for facilities spelled differently across files.
+  Aliases are explicit rather than fuzzy-matched so a merge is always
+  reviewable; the build _warns_ about unlisted near-duplicates.
+- keeps facilities with no coordinates instead of dropping them, and marks them
+  so the UI can say "not on the map".
+
+### Changing the data
+
+1. Edit the CSVs in `public/data/`.
+2. `npm run build:data` — read the warnings; errors abort the build.
+3. If a column was added or renamed, update `src/data/schema.ts` to match.
+
+## Deploying
+
+Pushing to `main` runs `.github/workflows/deploy.yml`, which typechecks, tests,
+builds, and rsyncs `out/` to `/var/www/wahealth.konnorkooi.com/` on deb-server.
+
+### Before the first deploy
+
+These are one-time and all need `sudo` on the server, so they have to be done
+by hand. Full commands are at the top of `deploy/nginx-wahealth.conf.example`.
+
+1. **DNS** — `wahealth.konnorkooi.com` does not resolve yet. Add the record in
+   Cloudflare, set to **DNS only** (grey cloud) until certbot has issued the
+   cert, or the HTTP-01 challenge is answered by Cloudflare's edge rather than
+   the origin.
+2. **Docroot** — `sudo mkdir -p /var/www/wahealth.konnorkooi.com` owned by
+   `konnor`, so the rsync can write to it.
+3. **nginx + TLS** — install the site config, symlink it into `sites-enabled`,
+   run `sudo certbot --nginx -d wahealth.konnorkooi.com`, reload.
+4. **GitHub secrets** — add `SSH_PRIVATE_KEY`, `REMOTE_HOST`, `REMOTE_USER` to
+   this repository. Secrets are per-repository, so the ones on
+   Personal-Portfolio do not carry over even though the values are the same.
+
+The workflow only copies files; it never touches nginx config.
+
+### The CSP is load-bearing
+
+The Content-Security-Policy in the nginx config is what makes the map work
+(`connect-src` for tiles, `worker-src` for MapLibre's worker) and what makes
+hydration work (`script-src 'unsafe-inline'`, required by Next's static
+export). Get it wrong and the site breaks in a way no build or unit test
+notices.
+
+`e2e/csp.spec.ts` parses the policy straight out of
+`deploy/nginx-wahealth.conf.example` and serves the real build behind it, so a
+regression there fails CI.
+
+## Gotcha: maplibre-gl is pinned to 5.x
+
+react-map-gl 8 declares support for maplibre-gl >=4, but does **not** work with
+maplibre-gl 6. Under v6 the map renders its basemap and looks nearly right, but
+`load` never fires and no markers ever appear — with no error in the console.
+Read the note at the top of `src/components/map/HospitalMap.tsx` before bumping
+it.
+
+## Data caveats
+
+Facilities are listed as they appear in the state filings. A blank entry means
+the facility did not answer that question — not that a service is unavailable.
+Some filings are flagged by the state as using an outdated or incorrect form;
+the UI surfaces those notes. Confirm directly with a hospital before relying on
+anything here.
+
+Source:
+[Washington State Department of Health hospital policies](https://doh.wa.gov/data-statistical-reports/healthcare-washington/hospital-and-patient-data/hospital-policies)
 
 ## License
 
-This project is open source and available under the [MIT License](LICENSE).
-
-## Todo
-
--   Consolidating styles and ensuring consistent use of Tailwind CSS throughout the project.
--   Improving accessibility by adding proper ARIA labels and roles where necessary.
--   Enhancing error handling and loading states for data fetching.
--   Adding unit and integration tests to ensure reliability.
--   Optimizing performance, particularly for the map component and large data sets.
--   Implementing server-side rendering or static site generation for improved SEO and initial load times.
--   Adding more detailed documentation for each component and function.
+MIT

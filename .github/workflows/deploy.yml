@@ -1,0 +1,48 @@
+name: Deploy to wahealth.konnorkooi.com
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - run: npm ci
+
+      # Gate the deploy on the same checks CI runs, so main can never ship
+      # data that fails validation.
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm test
+
+      # Runs prebuild -> build:data, then emits out/
+      - name: Build static export
+        run: npm run build
+
+      - name: Deploy to nginx server
+        uses: easingthemes/ssh-deploy@v6.0.1
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          SOURCE: "out/"
+          TARGET: "/var/www/wahealth.konnorkooi.com/"
+          # --delete keeps the docroot in sync with the build. This app owns
+          # its own subdomain root, so unlike the konnorkooi.com deploy there
+          # is nothing else living in this directory to protect.
+          ARGS: "-rlgoDzvc --delete -i"
