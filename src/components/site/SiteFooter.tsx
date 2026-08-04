@@ -28,67 +28,78 @@ const LINKS = [
  * The two previous footers are merged into one, and each icon link now has an
  * accessible name — the old ones were unlabelled, so a screen reader
  * announced three anonymous links.
+ *
+ * The caveats about what a blank answer means are load-bearing for a site
+ * people may make care decisions from, so they get the wide column rather
+ * than being tucked under the credits.
  */
 export function SiteFooter({ generatedAt }: { generatedAt: string }) {
   const built = new Date(generatedAt);
   return (
-    <footer className="mt-10 border-t border-lightblue/40 bg-white">
-      <div className="mx-auto max-w-7xl px-4 py-8 lg:px-8">
-        <p className="text-sm">
-          All data is sourced from{" "}
-          <a
-            href={SOURCE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-medium text-darkblue underline underline-offset-2"
-          >
-            the Washington State Department of Health
-          </a>
-          , which publishes the reproductive health and end-of-life policies
-          each facility files with the state.
-        </p>
-        <p className="mt-2 text-sm text-gray-600">
-          Facilities are listed as they appear in the source filings. A blank
-          entry means the facility did not answer that question — not that the
-          service is unavailable. Confirm directly with the hospital before
-          relying on anything here.
-        </p>
-
-        <div className="mt-6 flex flex-col gap-4 border-t border-lightblue/40 pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <div className="text-sm text-gray-600">
-            <p className="font-medium text-gray-800">Konnor Kooi</p>
-            <p>WWU Computer Science</p>
-            <p className="mt-1">
-              Data built{" "}
-              <time dateTime={generatedAt}>
-                {built.toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </time>
-            </p>
-          </div>
-          <nav aria-label="Social links" className="flex gap-4">
-            {LINKS.map(({ href, label, path }) => (
+    <footer className="mt-auto border-t border-line bg-surface">
+      <div className="mx-auto max-w-[1600px] px-4 py-8 lg:px-8">
+        <div className="grid gap-6 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+          <div className="max-w-2xl">
+            <h2 className="text-2xs font-semibold tracking-wide text-ink-subtle uppercase">
+              About this data
+            </h2>
+            <p className="mt-2 text-sm text-ink-muted">
+              Every answer here comes from{" "}
               <a
-                key={href}
-                href={href}
+                href={SOURCE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded p-1 text-darkblue hover:opacity-70"
+                className="font-medium text-brand underline underline-offset-2"
               >
-                <svg
-                  viewBox="0 0 16 16"
-                  className="size-6 fill-current"
-                  aria-hidden="true"
-                >
-                  <path d={path} />
-                </svg>
-                <span className="sr-only">{label}</span>
+                the Washington State Department of Health
               </a>
-            ))}
-          </nav>
+              , which publishes the reproductive health and end-of-life policies
+              each facility files with the state.
+            </p>
+            <p className="mt-2 text-sm text-ink-muted">
+              Facilities are listed as they appear in those filings. A blank
+              answer means the facility did not answer that question — not that
+              the service is unavailable. Confirm directly with the hospital
+              before relying on anything here.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-4 text-sm text-ink-muted md:items-end md:text-right">
+            <div>
+              <p className="font-semibold text-ink">Konnor Kooi</p>
+              <p className="text-xs">WWU Computer Science</p>
+              <p className="mt-1 text-xs">
+                Data built{" "}
+                <time dateTime={generatedAt} className="tnum">
+                  {built.toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </time>
+              </p>
+            </div>
+            <nav aria-label="Social links" className="flex gap-1">
+              {LINKS.map(({ href, label, path }) => (
+                <a
+                  key={href}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-md p-1.5 text-ink-subtle transition-colors hover:bg-surface-sunken hover:text-brand"
+                >
+                  <svg
+                    viewBox="0 0 16 16"
+                    className="size-5 fill-current"
+                    aria-hidden="true"
+                  >
+                    <path d={path} />
+                  </svg>
+                  <span className="sr-only">{label}</span>
+                </a>
+              ))}
+            </nav>
+          </div>
         </div>
       </div>
     </footer>

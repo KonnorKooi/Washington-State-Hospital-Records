@@ -34,11 +34,16 @@ import "maplibre-gl/dist/maplibre-gl.css";
 /**
  * Free, key-less vector tiles. Overridable so the tile host can be swapped
  * (or self-hosted) without touching code — note that the CSP in
- * deploy/security-headers.conf must allow whichever host is used.
+ * deploy/nginx-wahealth.conf.example must allow whichever host is used.
+ *
+ * `positron` rather than `liberty`: the map is here to show where facilities
+ * are, and a full-colour street basemap competes with the markers for
+ * attention. A near-monochrome basemap lets the markers and the selection
+ * state carry all the colour.
  */
 const MAP_STYLE =
   process.env.NEXT_PUBLIC_MAP_STYLE_URL ??
-  "https://tiles.openfreemap.org/styles/liberty";
+  "https://tiles.openfreemap.org/styles/positron";
 
 const WASHINGTON_BOUNDS: [number, number, number, number] = [
   -124.9, 45.4, -116.8, 49.1,
@@ -49,7 +54,7 @@ const CLUSTER_LAYER: LayerProps = {
   type: "circle",
   filter: ["has", "point_count"],
   paint: {
-    "circle-color": "#31708E",
+    "circle-color": "#276D8C",
     "circle-opacity": 0.9,
     "circle-radius": ["step", ["get", "point_count"], 16, 5, 22, 15, 28],
     "circle-stroke-width": 2,
@@ -79,11 +84,16 @@ const POINT_LAYER: LayerProps = {
     "circle-color": [
       "case",
       ["boolean", ["get", "selected"], false],
-      "#B91C1C",
-      "#5085A5",
+      "#B3261E",
+      "#3F87AB",
     ],
-    "circle-radius": ["case", ["boolean", ["get", "selected"], false], 11, 8],
-    "circle-stroke-width": 2,
+    "circle-radius": ["case", ["boolean", ["get", "selected"], false], 10, 6.5],
+    "circle-stroke-width": [
+      "case",
+      ["boolean", ["get", "selected"], false],
+      3,
+      2,
+    ],
     "circle-stroke-color": "#ffffff",
   },
 };
