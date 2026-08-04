@@ -1,0 +1,9 @@
+.next/
+out/
+node_modules/
+src/data/generated/
+public/data/
+package-lock.json
+playwright-report/
+test-results/
+codebase.md

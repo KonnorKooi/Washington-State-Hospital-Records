@@ -1,0 +1,70 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/*
+ * Tailwind v4 is CSS-first: this @theme block replaces the old
+ * tailwind.config.ts. Every custom property below generates utilities
+ * (--color-darkblue -> bg-darkblue, text-darkblue, border-darkblue, ...).
+ */
+@theme {
+  /* Brand palette, carried over from the v3 config. */
+  --color-lightblue: #8fc1e3;
+  --color-darkgreen: #687864;
+  --color-midblue: #5085a5;
+  --color-darkblue: #31708e;
+  --color-graywhite: #f7f9fb;
+
+  /* Semantic aliases so components don't hardcode brand names. */
+  --color-brand: var(--color-darkblue);
+  --color-brand-muted: var(--color-lightblue);
+  --color-surface: #ffffff;
+  --color-surface-sunken: var(--color-graywhite);
+
+  /*
+   * Service availability states. These are darker than Tailwind's -500
+   * shades so they clear 4.5:1 against white — the old code used
+   * text-green-500 / text-red-500, which do not.
+   */
+  --color-service-yes: #15803d;
+  --color-service-no: #b91c1c;
+  --color-service-partial: #a16207;
+  --color-service-unknown: #52525b;
+
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-surface-sunken);
+    color: #1f2937;
+    font-family: var(--font-sans);
+  }
+
+  /*
+   * Visible focus for keyboard users everywhere. The old build had no
+   * focus styling at all, and several controls were non-focusable divs.
+   */
+  :focus-visible {
+    outline: 2px solid var(--color-darkblue);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
