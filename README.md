@@ -82,14 +82,38 @@ comments` is its own state**; the old code tested `=== "yes"` and so hid those
 ## Deploying
 
 Pushing to `main` runs `.github/workflows/deploy.yml`, which typechecks, tests,
-builds, and rsyncs `out/` to `/var/www/wahealth.konnorkooi.com/`.
+builds, and rsyncs `out/` to `/var/www/wahealth.konnorkooi.com/` on deb-server.
 
-Required repository secrets: `SSH_PRIVATE_KEY`, `REMOTE_HOST`, `REMOTE_USER`.
+### Before the first deploy
 
-Server-side setup is one-time and documented at the top of
-`deploy/nginx-wahealth.conf.example` — nginx server block, TLS via certbot, and
-the security-headers snippet. The workflow only copies files; it never touches
-nginx config.
+These are one-time and all need `sudo` on the server, so they have to be done
+by hand. Full commands are at the top of `deploy/nginx-wahealth.conf.example`.
+
+1. **DNS** — `wahealth.konnorkooi.com` does not resolve yet. Add the record in
+   Cloudflare, set to **DNS only** (grey cloud) until certbot has issued the
+   cert, or the HTTP-01 challenge is answered by Cloudflare's edge rather than
+   the origin.
+2. **Docroot** — `sudo mkdir -p /var/www/wahealth.konnorkooi.com` owned by
+   `konnor`, so the rsync can write to it.
+3. **nginx + TLS** — install the site config, symlink it into `sites-enabled`,
+   run `sudo certbot --nginx -d wahealth.konnorkooi.com`, reload.
+4. **GitHub secrets** — add `SSH_PRIVATE_KEY`, `REMOTE_HOST`, `REMOTE_USER` to
+   this repository. Secrets are per-repository, so the ones on
+   Personal-Portfolio do not carry over even though the values are the same.
+
+The workflow only copies files; it never touches nginx config.
+
+### The CSP is load-bearing
+
+The Content-Security-Policy in the nginx config is what makes the map work
+(`connect-src` for tiles, `worker-src` for MapLibre's worker) and what makes
+hydration work (`script-src 'unsafe-inline'`, required by Next's static
+export). Get it wrong and the site breaks in a way no build or unit test
+notices.
+
+`e2e/csp.spec.ts` parses the policy straight out of
+`deploy/nginx-wahealth.conf.example` and serves the real build behind it, so a
+regression there fails CI.
 
 ## Gotcha: maplibre-gl is pinned to 5.x
 
